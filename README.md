@@ -42,4 +42,12 @@ uvicorn app.main:app --reload
 - sqlalchemy
 - pydantic
 - python-dotenv 
->>>>>>> 6dec0e9 (initial setting)
+
+
+## .env 설정
+```
+DB_USER=
+DB_PASSWORD=
+DB_NAME=
+DB_URL=
+```
