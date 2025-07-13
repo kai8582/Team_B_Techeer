@@ -8,7 +8,6 @@ from sqlalchemy.exc import OperationalError
 load_dotenv()
 
 DATABASE_URL = os.getenv("DB_URL")
-
 MAX_RETRIES = 10
 RETRY_DELAY = 2  # seconds
 
@@ -19,7 +18,7 @@ def init_engine_with_retries():
     global engine
     for attempt in range(1, MAX_RETRIES + 1):
         try:
-            engine = create_engine(DATABASE_URL, pool_pre_ping=True)
+            engine = create_engine(str(DATABASE_URL), pool_pre_ping=True)
             with engine.connect() as conn:
                 #커넥션 테스트
                 conn.execute(text("SELECT 1"))

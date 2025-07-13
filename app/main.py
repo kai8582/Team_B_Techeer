@@ -1,9 +1,18 @@
 from fastapi import FastAPI, Depends
 from .routers import example_router  # 예시 라우터, 실제 라우터로 교체 필요
 from .core.database import engine, SessionLocal
-from .models.NewsArticle import NewsArticle
+import uuid
+import datetime
+from app.models.NewsArticle import NewsArticle
+from app.models.source import Source
+from app.models.history import History
+from app.models.keyword import UserKeyword
+from app.models.preferred_source import UserPreferredSource
+from app.models.token import UserToken
+from app.models.user import User
 from sqlalchemy.orm import Session
 from app.core.database import Base
+from app.test.create_test_data import create_test_data
 
 app = FastAPI()
 
@@ -30,16 +39,7 @@ def root():
 def read_articles(db: Session = Depends(get_db)):
     return db.query(NewsArticle).all()
 
-
-
-
-@app.on_event("startup")
-def load_test_data():
-    db = SessionLocal()
-    if not db.query(NewsArticle).first():
-        db.add_all([
-            NewsArticle(title="Hello World", content="This is your first article."),
-            NewsArticle(title="FastAPI Rocks", content="FastAPI is a modern web framework for Python.")
-        ])
-        db.commit()
-    db.close()
+@app.get("/test")
+def create_Test_data():
+    create_test_data()
+    return {"message": "테스트 데이터 생성 완료"} 
