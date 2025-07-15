@@ -1,10 +1,9 @@
 from fastapi import APIRouter
+from app.celery_app import add
 
-router = APIRouter(
-    prefix="/example",
-    tags=["example"]
-)
+router = APIRouter()
 
-@router.get("/")
-def example_root():
-    return {"message": "This is an example endpoint."} 
+@router.get("/add-task")
+def add_task(x: int, y: int):
+    task = add.delay(x, y)
+    return {"task_id": task.id} 

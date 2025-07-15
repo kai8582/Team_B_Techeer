@@ -1,16 +1,58 @@
 version: "3.8"
 
 services:
-  backend:
+  fastapi:
     build: .
     container_name: fastapi
     ports:
       - "8000:8000"
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload # 로컬 환경에서만 --reload를 사용하도록 함
     volumes:
       - .:/app   
+    env_file:
+      - .env
     depends_on:
+      - rabbitmq
+      - redis
       - db
+    environment:
+      - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+
+  celery:
+    build: .
+    container_name: celery
+    command: celery -A app.celery_app.celery_app worker --loglevel=info
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - rabbitmq
+      - redis
+      - db
+    environment:
+      - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"  # AMQP 포트
+      - "15672:15672"  # RabbitMQ 관리 콘솔 포트
+      - "15692:15692" # metrics 포트
+    restart: always # 연결 끊어질시 다시 시작용
+    tty: true # 끊어짐 방지
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest # 유저
+      - RABBITMQ_DEFAULT_PASS=guest # 비번
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
 
   db:
     image: postgres:15
@@ -30,7 +72,7 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
-      - backend
+      - fastapi
 
 volumes:
   postgres_data:
