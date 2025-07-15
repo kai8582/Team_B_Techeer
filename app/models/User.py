@@ -15,7 +15,7 @@ class User(Base):
     alarm_token = Column(String(200), nullable=False)
 
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
-    updated_at = Column(DateTime)
+    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
     is_deleted = Column(Boolean, nullable=False, default=False)
 
     keywords = relationship("UserKeyword", back_populates="user")
