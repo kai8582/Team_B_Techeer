@@ -9,13 +9,13 @@ logger = logging.getLogger(__name__)
 
 def create_user(db: Session, request_user_email: str, request_user_password: str):
     hashed_password = hash_password(request_user_password)
-    new_user = User( # "None"을 안하면 에러 코드가 떠서 넣어줌 불필요시 삭제
+    new_user = User(
         email=request_user_email,
         password=hashed_password,
-        created_at=datetime.datetime.utcnow(),
         voice_type="None",
         alarm_token="None",
         refresh_token="None",
+        created_at=datetime.datetime.utcnow(),
         is_deleted=False,
     )
     db.add(new_user)
