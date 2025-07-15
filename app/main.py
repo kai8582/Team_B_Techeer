@@ -27,45 +27,47 @@ def get_db():
 @app.get("/")
 def root():
     return {"message": "News Briefing Backend is running."}
-
+    
 @app.on_event("startup")
 def load_test_data():
     db: Session = SessionLocal()
 
     if not db.query(Press).first():
         press_names = ["SBS", "JTBC", "한국경제"]
-        presses = []
         for name in press_names:
-            press = Press(
-                id=str(uuid4()),
-                press_name=name,
-                created_at=datetime.utcnow(),
-                updated_at=datetime.utcnow(),
-                is_deleted=False
-            )
-            presses.append(press)
-
-        db.add_all(presses)
+            press = Press(press_name=name)
+            db.add(press)
         db.commit()
 
-        # 첫 번째 언론사에 테스트 기사 하나 생성 (예시)
-        article = NewsArticle(
-            id=str(uuid4()),
-            title="테스트 뉴스입니다",
-            url="https://example.com/news/1",
-            published_at=datetime.utcnow(),
-            summary_text="요약 내용입니다",
-            male_audio_url="https://example.com/audio/male.mp3",
-            female_audio_url="https://example.com/audio/female.mp3",
-            categories="IT",
-            image_url="https://example.com/image.jpg",
-            author="홍길동",
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow(),
-            is_deleted=False,
-            press_id=presses[0].id  # SBS에 연결
-        )
-        db.add(article)
-        db.commit()
+    # 크롤링 예시
+    crawling_result = {
+        "press_name": "SBS",
+        "title": "테스트 뉴스입니다",
+        "url": "https://example.com/news/1",
+        "published_at": datetime(2025, 7, 10, 8, 0),
+        "summary_text": "요약 내용입니다",
+        "categories": "IT",
+        "author": "홍길동",
+    }
 
+    # 언론사 이름으로 press.id 가져오기
+    press = db.query(Press).filter_by(press_name=crawling_result["press_name"]).first()
+
+    if press is None:
+        print(f"'{crawling_result['press_name']}' 언론사는 presses 테이블에 존재하지 않습니다.")
+        db.close()
+        return 
+
+
+    article = NewsArticle(
+        title=crawling_result["title"],
+        url=crawling_result["url"],
+        published_at=crawling_result["published_at"],
+        summary_text=crawling_result["summary_text"],
+        categories=crawling_result["categories"],
+        author=crawling_result["author"],
+        press_id=press.id
+    )
+    db.add(article)
+    db.commit()
     db.close()
