@@ -1,0 +1,37 @@
+from sqlalchemy.orm import Session
+from app.models.user import User
+from app.utils.password_hash_utils import hash_password, verify_password
+from app.utils.jwt_utils import create_access_token, verify_token
+import logging
+import datetime
+
+logger = logging.getLogger(__name__)
+
+def create_user(db: Session, request_user_email: str, request_user_password: str):
+    hashed_password = hash_password(request_user_password)
+    new_user = User( # "None"을 안하면 에러 코드가 떠서 넣어줌 불필요시 삭제
+        email=request_user_email,
+        password=hashed_password,
+        created_at=datetime.datetime.utcnow(),
+        voice_type="None",
+        alarm_token="None",
+        refresh_token="None",
+        is_deleted=False,
+    )
+    db.add(new_user)
+    db.commit()
+
+    return new_user
+
+def get_user_by_email(db: Session, request_user_email: str): # 이메일로 유저 조회
+    return db.query(User).filter(User.email == request_user_email).first()
+
+def login_process(db: Session, request_user_email: str, request_user_password: str): # 로그인 처리
+    user = db.query(User).filter(User.email == request_user_email).first()
+    if user is None:
+        return False
+    
+    if verify_password(request_user_password, user.password):
+        return user
+    else:
+        return False
