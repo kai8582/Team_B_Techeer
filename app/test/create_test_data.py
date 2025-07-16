@@ -8,12 +8,11 @@ load_dotenv()
 
 from app.core.database import SessionLocal
 from app.models.user import User
-from app.models.source import Source
-from app.models.NewsArticle import NewsArticle
-from app.models.token import UserToken
-from app.models.keyword import UserKeyword
-from app.models.preferred_source import UserPreferredSource
-from app.models.history import History
+from app.models.press import Press
+from app.models.news_article import NewsArticle
+from app.models.user_keyword import UserKeyword
+from app.models.user_preferred_press import UserPreferredPress
+from app.models.article_history import ArticleHistory
 
 def create_test_data():
     db = SessionLocal()
@@ -44,7 +43,7 @@ def create_test_data():
         press_names = ["조선일보", "중앙일보", "동아일보", "한겨레", "경향신문", "서울신문"]
         sources = []
         for press_name in press_names:
-            source = Source(
+            source = Press(
                 press_name=press_name,
                 created_at=datetime.datetime.utcnow(),
                 updated_at=datetime.datetime.utcnow(),
@@ -129,7 +128,7 @@ def create_test_data():
         
         for user in users:
             for i in range(2):  # 각 사용자당 2개 선호 언론사
-                preferred_source = UserPreferredSource(
+                preferred_source = UserPreferredPress(
                     type=types[i % len(types)],
                     created_at=datetime.datetime.utcnow(),
                     updated_at=datetime.datetime.utcnow(),
@@ -149,7 +148,7 @@ def create_test_data():
         
         for user in users:
             for i in range(3):  # 각 사용자당 3개 히스토리
-                history = History(
+                history = ArticleHistory(
                     viewed_at=datetime.datetime.utcnow() - datetime.timedelta(hours=i),
                     created_at=datetime.datetime.utcnow(),
                     updated_at=datetime.datetime.utcnow(),

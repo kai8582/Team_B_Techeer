@@ -1,14 +1,14 @@
 from fastapi import FastAPI, Depends
-from .routers import example_router  # 예시 라우터, 실제 라우터로 교체 필요
+from .routers import example_router, async_crawl_router  # 예시 라우터, 실제 라우터로 교체 필요
 from .core.database import engine, SessionLocal
 import uuid
 import datetime
-from app.models.NewsArticle import NewsArticle
-from app.models.source import Source
-from app.models.history import History
-from app.models.keyword import UserKeyword
-from app.models.preferred_source import UserPreferredSource
-from app.models.token import UserToken
+from app.models.news_article import NewsArticle
+from app.models.refresh_token import RefreshToken
+from app.models.press import Press
+from app.models.article_history import ArticleHistory
+from app.models.user_keyword import UserKeyword
+from app.models.user_preferred_press import UserPreferredPress
 from app.models.user import User
 from sqlalchemy.orm import Session
 from app.core.database import Base
@@ -18,6 +18,7 @@ app = FastAPI()
 
 # 라우터 등록 (예시)
 app.include_router(example_router.router)
+app.include_router(async_crawl_router.router)
 
 # Create tables
 Base.metadata.create_all(bind=engine)
