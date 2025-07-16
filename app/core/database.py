@@ -13,6 +13,13 @@ RETRY_DELAY = 2  # seconds
 
 engine = None
 
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 #DB 연결 재시도 함수
 def init_engine_with_retries():
     global engine
