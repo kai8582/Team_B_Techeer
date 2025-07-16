@@ -37,7 +37,7 @@ def init_engine_with_retries():
     else:
         raise RuntimeError("❌ Could not connect to the database after multiple attempts")
 
-
+engine = create_engine(DATABASE_URL)
 init_engine_with_retries()
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 Base = declarative_base()

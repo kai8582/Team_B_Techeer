@@ -17,8 +17,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-app = FastAPI()
-
 origins = [
     #추가해서 사용
 ]   
@@ -44,12 +42,10 @@ def get_db():
     finally:
         db.close()
 
+
 # 라우터 등록
 app.include_router(example_router.router)
 app.include_router(user.router, prefix="/api/v1")
-
-# Create tables
-Base.metadata.create_all(bind=engine)
 
 @app.get("/")
 def root():
