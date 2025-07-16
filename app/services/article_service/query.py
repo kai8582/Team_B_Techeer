@@ -1,5 +1,5 @@
 from typing import List
-import uuid
+from uuid import UUID
 from dotenv.main import logger
 from sqlalchemy.orm import Session
 from app.models.news_article import NewsArticle
@@ -50,7 +50,7 @@ def delete_article(db: Session, article_id: str) -> bool:
     """
     try:
         article = db.query(NewsArticle).filter(
-            NewsArticle.id == uuid.UUID(article_id),
+            NewsArticle.id == UUID(article_id),
             NewsArticle.is_deleted == False
         ).first()
         
@@ -84,3 +84,7 @@ def get_articles_by_category(db: Session, category: str, limit: int = 10) -> Lis
         NewsArticle.categories == category,
         NewsArticle.is_deleted == False
     ).order_by(NewsArticle.published_at.desc()).limit(limit).all()
+
+"""뉴스 상세 조회 """
+def get_article_by_id(db: Session, article_id: UUID):
+    return db.query(NewsArticle).filter(NewsArticle.id == article_id).first()
