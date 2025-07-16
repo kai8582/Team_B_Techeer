@@ -24,22 +24,18 @@ class AuthMiddleware(BaseHTTPMiddleware):
         ]
     
     async def dispatch(self, request: Request, call_next):
-        logger.info(f"Middleware processing: {request.url.path}")
         
         # 현재 경로가 공개 경로인지 확인 (정확한 매칭)
         is_public_path = request.url.path in self.public_paths
         
         if is_public_path:
             # 공개 경로는 인증 없이 통과
-            logger.info(f"Public path, skipping auth: {request.url.path}")
             return await call_next(request)
         
         # Authorization 헤더 확인
         auth_header = request.headers.get("Authorization")
-        logger.info(f"Auth header: {auth_header[:50] if auth_header else 'None'}...")
         
         if not auth_header or not auth_header.startswith("Bearer "): # 토큰이 없으면 401 에러
-            logger.info("No valid Authorization header found")
             return JSONResponse(
                 content='{"detail": "Authorization header is required"}',
                 status_code=401,
@@ -50,10 +46,8 @@ class AuthMiddleware(BaseHTTPMiddleware):
         
         # 토큰 검증
         payload = verify_token(token)
-        logger.info(f"Token verification result: {payload}")
         
         if not payload: # 토큰 검증
-            logger.info("Token verification failed")
             return JSONResponse(
                 content='{"detail": "Invalid or expired token"}',
                 status_code=401
@@ -68,9 +62,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
             
         # 요청에 사용자 정보 추가 (User_id 사용)
         user_id = payload.get("User_id")  # User_id에서 UUID 문자열 가져오기
-        logger.info(f"Setting user_id in request.state: {user_id}")
         
         request.state.user_id = user_id
-        request.state.user_payload = payload
                         
         return await call_next(request) 
