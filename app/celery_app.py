@@ -1,4 +1,5 @@
 from celery import Celery
+import time
 
 # Celery 앱 생성
 celery_app = Celery(
@@ -10,4 +11,5 @@ celery_app = Celery(
 # 간단한 덧셈 태스크 정의
 @celery_app.task
 def add(x, y):
+    time.sleep(5) # 테스트를 위해 5초 걸리는 작업 추가
     return x + y
