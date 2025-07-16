@@ -1,18 +1,13 @@
-from fastapi import FastAPI, Depends, Request, Response
+from fastapi import FastAPI, Depends
 from app.routers import router
+from app.services.crawling_service.async_crawler import scrape_all_articles_async
+from app.utils.scheduler import start_scheduler
 from .core.database import engine, SessionLocal
 from sqlalchemy.orm import Session
 from app.core.database import Base
-from app.models.user import User
-from app.models.user_keyword import UserKeyword
-from app.models.user_preferred_press import UserPreferredPress
-from app.models.article_history import ArticleHistory
-from app.models.press import Press
 from app.models.news_article import NewsArticle
-from fastapi.middleware.cors import CORSMiddleware
 # from starlette.middleware.sessions import SessionMiddleware
 # from app.middleware.auth_middleware import AuthMiddleware
-import os
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -55,6 +50,16 @@ def root():
 @app.get("/articles")
 def read_articles(db: Session = Depends(get_db)):
     return db.query(NewsArticle).all()
+
+# 서버 시작 시 전체 기사 크롤링 한번 실행
+# 이후 매 15분마다 자동 크롤링
+@app.on_event("startup")
+def startup_event():
+    start_scheduler(app)
+    # 서버 시작 시 즉시 한 번 실행
+    import asyncio
+    loop = asyncio.get_event_loop()
+    loop.create_task(scrape_all_articles_async(max_concurrent=10, save_to_db=True))
 
 
 
