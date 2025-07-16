@@ -6,7 +6,7 @@ from app.core.database import SessionLocal
 from app.services.crawling_service.async_crawler import scrape_all_articles_async
 from app.services.article_service.query import get_recent_articles, get_articles_by_category
 
-router = APIRouter(prefix="/api/v1")
+router = APIRouter(prefix="/test",tags=["Test"])
 
 @router.get("/crawl")
 async def crawl_articles_async(save_to_db: bool = True):
@@ -30,7 +30,7 @@ async def crawl_articles_async(save_to_db: bool = True):
         raise HTTPException(status_code=500, detail=f"크롤링 실패: {str(e)}")
 
 """저장된 최근 기사 20개 조회"""
-@router.get("/articles")
+@router.get("/recent_articles")
 async def get_saved_articles(limit: int = 20, category: Optional[str] = None):
     try:
         db = SessionLocal()

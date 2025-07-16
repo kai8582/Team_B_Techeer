@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Session
-from app.models.User import User
+from app.models.user import User
 from app.utils.password_hash_utils import hash_password, verify_password
-from app.utils.jwt_utils import create_access_token, verify_token
 import datetime
 
 def create_user(db: Session, request_user_email: str, request_user_password: str):

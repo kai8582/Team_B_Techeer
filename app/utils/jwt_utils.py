@@ -1,10 +1,7 @@
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
-from fastapi import HTTPException, status, Response, Depends, Header
-from fastapi.security import OAuth2PasswordBearer
 import os
 from dotenv import load_dotenv
-from typing import Optional
 from uuid import UUID
 
 load_dotenv()
