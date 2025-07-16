@@ -1,11 +1,8 @@
 from sqlalchemy.orm import Session
-from app.models.user import User
+from app.models.User import User
 from app.utils.password_hash_utils import hash_password, verify_password
 from app.utils.jwt_utils import create_access_token, verify_token
-import logging
 import datetime
-
-logger = logging.getLogger(__name__)
 
 def create_user(db: Session, request_user_email: str, request_user_password: str):
     hashed_password = hash_password(request_user_password)

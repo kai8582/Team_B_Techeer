@@ -3,7 +3,12 @@ from .routers import example_router, user
 from .core.database import engine, SessionLocal
 from sqlalchemy.orm import Session
 from app.core.database import Base
-from app.models.user import User
+from app.models.User import User
+from app.models.user_keyword import UserKeyword
+from app.models.user_preferred_press import UserPreferredPress
+from app.models.article_history import ArticleHistory
+from app.models.Press import Press
+from app.models.news_article import NewsArticle
 from fastapi.middleware.cors import CORSMiddleware
 # from starlette.middleware.sessions import SessionMiddleware
 from app.middleware.auth_middleware import AuthMiddleware
