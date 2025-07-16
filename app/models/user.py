@@ -13,9 +13,7 @@ class User(Base):
     password = Column(String(100), nullable=False)
     voice_type = Column(String(20), nullable=False)
     alarm_token = Column(String(200), nullable=False)
-
     refresh_token = Column(String(500), nullable=False)
-
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
     updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
     is_deleted = Column(Boolean, nullable=False, default=False)
@@ -23,3 +21,4 @@ class User(Base):
     keywords = relationship("UserKeyword", back_populates="user")
     preferred_presses = relationship("UserPreferredPress", back_populates="user")
     article_histories = relationship("ArticleHistory", back_populates="user")
+
