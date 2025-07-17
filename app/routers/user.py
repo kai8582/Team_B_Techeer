@@ -47,7 +47,7 @@ async def register_user(user_data: UserBase, db: Session = Depends(get_db)):
     else:
         raise HTTPException(status_code=409, detail="이미 존재하는 이메일입니다.")
     
-@router.post("/exists?email={email}")
+@router.post("/exists")
 async def check_email_exists(email: str, db: Session = Depends(get_db)):
     user = get_user_by_email(db, email)
     if user is None:
