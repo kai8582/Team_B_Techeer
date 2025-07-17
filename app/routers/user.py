@@ -12,7 +12,7 @@ from datetime import datetime
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 @router.post("/register", response_model=RegisterResponse)
-async def register_user(user_data: UserBase, db: Session = Depends(get_db)):
+def register_user(user_data: UserBase, db: Session = Depends(get_db)):
     # 입력 검증
     if not user_data.email or user_data.email.strip() == "":
         raise HTTPException(status_code=400, detail="이메일은 비어있을 수 없습니다.")
@@ -46,9 +46,17 @@ async def register_user(user_data: UserBase, db: Session = Depends(get_db)):
         )
     else:
         raise HTTPException(status_code=409, detail="이미 존재하는 이메일입니다.")
+    
+@router.get("/exists")
+def check_email_exists(email: str, db: Session = Depends(get_db)):
+    user = get_user_by_email(db, email)
+    if user is None:
+        raise HTTPException(status_code=404, detail="이메일이 존재하지 않습니다.")
+    else:
+        raise HTTPException(status_code=409, detail="이미 존재하는 이메일입니다.")    
 
 @router.post("/login", response_model=LoginResponse)
-async def login_user(user_data: UserBase, response: Response, db: Session = Depends(get_db)):
+def login_user(user_data: UserBase, response: Response, db: Session = Depends(get_db)):
     # 입력 검증
     if not user_data.email or user_data.email.strip() == "":
         raise HTTPException(status_code=400, detail="이메일은 비어있을 수 없습니다.")
