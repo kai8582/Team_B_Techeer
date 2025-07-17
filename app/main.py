@@ -1,19 +1,45 @@
-from fastapi import FastAPI, Depends
-from .routers import example_router  # 예시 라우터, 실제 라우터로 교체 필요
+from fastapi import FastAPI, Depends, Request, Response
+from app.routers import router
 from .core.database import engine, SessionLocal
-from .models.NewsArticle import NewsArticle
 from sqlalchemy.orm import Session
 from app.core.database import Base
+from app.models.user import User
+from app.models.user_keyword import UserKeyword
+from app.models.user_preferred_press import UserPreferredPress
+from app.models.article_history import ArticleHistory
+from app.models.press import Press
+from app.models.news_article import NewsArticle
+from fastapi.middleware.cors import CORSMiddleware
+# from starlette.middleware.sessions import SessionMiddleware
+# from app.middleware.auth_middleware import AuthMiddleware
+import os
+from dotenv import load_dotenv
 
-app = FastAPI()
+load_dotenv()
 
-# 라우터 등록 (예시)
-app.include_router(example_router.router)
+app=FastAPI()  
 
+app.include_router(router)
 # Create tables
 Base.metadata.create_all(bind=engine)
+# origins = [
+#     #추가해서 사용
+# ]   
 
-# Dependency to get DB session
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=origins,
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
+
+# SECRET_KEY = os.getenv("SECRET_KEY")
+# app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
+
+# 인증 미들웨어 추가
+# app.add_middleware(AuthMiddleware)
+
 def get_db():
     db = SessionLocal()
     try:
@@ -21,10 +47,10 @@ def get_db():
     finally:
         db.close()
 
+
 @app.get("/")
 def root():
     return {"message": "News Briefing Backend is running."} 
-
 
 @app.get("/articles")
 def read_articles(db: Session = Depends(get_db)):
@@ -33,13 +59,3 @@ def read_articles(db: Session = Depends(get_db)):
 
 
 
-@app.on_event("startup")
-def load_test_data():
-    db = SessionLocal()
-    if not db.query(NewsArticle).first():
-        db.add_all([
-            NewsArticle(title="Hello World", content="This is your first article."),
-            NewsArticle(title="FastAPI Rocks", content="FastAPI is a modern web framework for Python.")
-        ])
-        db.commit()
-    db.close()
