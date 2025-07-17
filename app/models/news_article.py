@@ -15,7 +15,6 @@ class NewsArticle(Base):
     summary_text = Column(String, nullable=False)
     male_audio_url = Column(String(100))
     female_audio_url = Column(String(100))
-    categories = Column(String(20), nullable=False)
     image_url = Column(String(200))
     author = Column(String(20), nullable=False)
 
@@ -24,6 +23,9 @@ class NewsArticle(Base):
     is_deleted = Column(Boolean, nullable=False, default=False)
 
     press_id = Column(UUID(as_uuid=True), ForeignKey("presses.id"), nullable=False)
+    category_id = Column(UUID(as_uuid=True), ForeignKey("categories.id"), nullable=False)
+    
     press = relationship("Press", back_populates="articles")
+    category = relationship("Category", back_populates="news_articles")
 
     histories = relationship("ArticleHistory", back_populates="article")

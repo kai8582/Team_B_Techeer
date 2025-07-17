@@ -14,7 +14,8 @@ class Press(Base):
     updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
     is_deleted = Column(Boolean, nullable=False, default=False)
 
-    press_name = Column(String, nullable=False)
+    press_name = Column(String(50), nullable=False)
 
     articles = relationship("NewsArticle", back_populates="press")
     preferred_by = relationship("UserPreferredPress", back_populates="press")
+    press_categories = relationship("PressCategory", back_populates="press")
