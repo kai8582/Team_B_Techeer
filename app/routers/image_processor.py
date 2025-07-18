@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from app.services.article_service.query import get_article_by_id
 from app.services.article_service.image_process import process_image_to_s3
+from app.celery_app import process_image_to_s3_async
 from app.core.database import get_db
 from sqlalchemy.orm import Session
 
@@ -18,18 +19,15 @@ async def process_image_endpoint(article_id: str, db: Session = Depends(get_db))
         if not article.original_image_url:
             raise HTTPException(status_code=400, detail="기사에 이미지 URL이 없습니다")
         
-        # 이미지 처리 및 S3 업로드
-        result = process_image_to_s3(db, article_id)
+        # 비동기로 이미지 처리 시작
+        result = process_image_to_s3_async(article_id)
         
-        if result["success"]:
-            return {
-                "message": "이미지 처리 및 S3 업로드 완료",
-                "article_id": article_id,
-                "thumbnail_url": result["s3_urls"]["thumbnail"],
-                "original_url": result["original_url"]
-            }
-        else:
-            raise HTTPException(status_code=500, detail=f"이미지 처리 실패: {result.get('error', '알 수 없는 오류')}")
+        return {
+            "message": "이미지 처리가 백그라운드에서 시작되었습니다",
+            "task_id": result["task_id"],
+            "status": result["status"],
+            "article_id": article_id
+        }
             
     except HTTPException:
         raise

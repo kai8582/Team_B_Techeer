@@ -9,7 +9,7 @@ from app.core.database import get_db
 from sqlalchemy.orm import Session
 from app.models.news_article import NewsArticle
 from app.services.article_service.query import get_article_by_id
-from fastapi import HTTPException
+from fastapi import HTTPException, Depends
 import os
 from dotenv import load_dotenv
 
@@ -133,6 +133,3 @@ def process_image_to_s3(db: Session, article_id: str) -> Dict:
             db.commit()
     
     return result
-    
-
-
