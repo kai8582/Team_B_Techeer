@@ -15,9 +15,10 @@ class NewsArticle(Base):
     summary_text = Column(String, nullable=False)
     male_audio_url = Column(String(100), nullable=False)
     female_audio_url = Column(String(100), nullable=False)
-    image_url = Column(String(200))
+    original_image_url = Column(String(200))
+    thumbnail_image_url = Column(String(200))
     author = Column(String(20), nullable=False)
-    cetagory_name = Column(String(30), nullable=False)  # ERD의 오타 그대로 유지
+    cetagory_name = Column(String(30), nullable=False)
 
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
     updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
