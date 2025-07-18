@@ -5,6 +5,8 @@ from .press import Press
 from .user_keyword import UserKeyword
 from .user_preferred_press import UserPreferredPress
 from .article_history import ArticleHistory
+from .category import Category
+from .user_category import UserCategory
 
 __all__ = [
     "User",
@@ -13,4 +15,6 @@ __all__ = [
     "UserKeyword",
     "UserPreferredPress",
     "ArticleHistory",
+    "Category",
+    "UserCategory",
 ]

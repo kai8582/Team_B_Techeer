@@ -16,5 +16,4 @@ class Category(Base):
     is_deleted = Column(Boolean, nullable=False, default=False)
     
     user_categories = relationship("UserCategory", back_populates="category")
-    press_categories = relationship("PressCategory", back_populates="category")
     news_articles = relationship("NewsArticle", back_populates="category")
