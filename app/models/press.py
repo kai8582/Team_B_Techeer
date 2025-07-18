@@ -18,4 +18,3 @@ class Press(Base):
 
     articles = relationship("NewsArticle", back_populates="press")
     preferred_by = relationship("UserPreferredPress", back_populates="press")
-    press_categories = relationship("PressCategory", back_populates="press")
