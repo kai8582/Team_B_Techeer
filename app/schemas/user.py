@@ -1,4 +1,6 @@
 from pydantic import BaseModel
+from typing import Optional
+from datetime import datetime
 
 class UserBase(BaseModel):
     email: str
@@ -17,3 +19,12 @@ class LoginResponse(BaseModel):
 
 class RefreshRequest(BaseModel):
     refresh_token: str
+
+class UserHistory(BaseModel):
+    user_id: str
+    news_id: str
+    title: str
+    thumbnail_image_url: str
+    url: str
+    category: str
+    viewed_at: datetime
