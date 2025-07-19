@@ -21,4 +21,5 @@ class User(Base):
     keywords = relationship("UserKeyword", back_populates="user")
     preferred_presses = relationship("UserPreferredPress", back_populates="user")
     article_histories = relationship("ArticleHistory", back_populates="user")
+    user_categories = relationship("UserCategory", back_populates="user")
 
